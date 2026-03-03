@@ -7,19 +7,22 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Proxy /api/* requests to worldmonitor.app, overriding Origin header
+// Proxy /api/* requests to worldmonitor.app with Origin override
 app.use('/api', createProxyMiddleware({
   target: 'https://worldmonitor.app',
   changeOrigin: true,
-  headers: {
-    'Origin': 'https://worldmonitor.app',
-    'Referer': 'https://worldmonitor.app/',
+  onProxyReq(proxyReq) {
+    // Override Origin header to pass CORS validation
+    proxyReq.setHeader('Origin', 'https://worldmonitor.app');
+    proxyReq.setHeader('Referer', 'https://worldmonitor.app/');
   },
-  pathRewrite: { '^/api': '/api' },
   onProxyRes(proxyRes) {
-    // Allow our domain
+    // Ensure CORS headers allow our domain
     proxyRes.headers['access-control-allow-origin'] = '*';
+    proxyRes.headers['access-control-allow-methods'] = 'GET, POST, OPTIONS';
+    proxyRes.headers['access-control-allow-headers'] = 'Content-Type, Authorization, X-WorldMonitor-Key';
   },
+  logLevel: 'debug'
 }));
 
 // Serve static files
