@@ -1,12 +1,11 @@
 {
   "name": "worldmonitor-render",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "scripts": {
     "start": "node server.mjs"
   },
   "dependencies": {
-    "express": "^4.21.0",
-    "http-proxy-middleware": "^3.0.0"
+    "express": "^4.21.0"
   }
 }
